@@ -40,8 +40,8 @@ class CharacterDetailsViewController: UIViewController {
     }
     
     private func bindOutput(to viewModel: CharacterDetailsViewModel) {
-        viewModel.episodes.observe(on: self) { episodes in
-            self.characterDetailsView.episodes = episodes
+        viewModel.sections.observe(on: self) { sections in
+            self.characterDetailsView.sections = sections
         }
     }
     

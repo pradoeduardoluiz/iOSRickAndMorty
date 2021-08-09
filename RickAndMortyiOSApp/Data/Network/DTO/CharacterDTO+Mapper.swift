@@ -46,7 +46,7 @@ extension CharacterDTO {
             image: image,
             created: created,
             location: location.toDomain(),
-            episodeIds: episode.map { $0.components(separatedBy: "/").last ?? "" }
+            episodeIds: episode.map { $0.components(separatedBy: "/").last ?? "0" }
         )
     }
     

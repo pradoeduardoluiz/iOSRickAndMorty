@@ -8,13 +8,7 @@
 import UIKit
 
 class TabBarViewController: UITabBarController {
-    
-    private let filterBarButton: UIBarButtonItem = {
-        let button = UIBarButtonItem()
-        button.title = "Filter"
-        return button
-    }()
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -16,7 +16,7 @@ class CharacterDetailsSectionView: UITableViewHeaderFooterView {
         let label = UILabel()
         label.textColor = .systemGray
         label.numberOfLines = 0
-        label.font = .systemFont(ofSize: 29, weight: .bold)
+        label.font = .systemFont(ofSize: 20, weight: .bold)
         return label
     }()
     
@@ -58,24 +58,19 @@ extension CharacterDetailsSectionView {
         contentView.addSubview(labelSection)
         contentView.addSubview(bottomDividerView)
         
-        contentView.topBorder(width: 1, borderColor: .black)
-        contentView.bottomBorder(width: 1, borderColor: .black)
-        
         topDividerView.snp.makeConstraints { make in
-            make.height.equalTo(1)
-            make.top.equalTo(contentView.snp.top)
+            make.height.equalTo(0.5)
             make.leading.trailing.equalToSuperview()
         }
         
         labelSection.snp.makeConstraints { make in
-            make.top.equalTo(topDividerView.snp.bottom)
-            make.centerY.equalToSuperview()
+            make.bottom.equalToSuperview().inset(10)
             make.leading.equalTo(contentView.snp.leading).inset(16)
             make.trailing.equalTo(contentView.snp.trailing)
         }
         
         bottomDividerView.snp.makeConstraints { make in
-            make.height.equalTo(1)
+            make.height.equalTo(0.5)
             make.bottom.equalTo(contentView.snp.bottom)
             make.leading.trailing.equalToSuperview()
         }

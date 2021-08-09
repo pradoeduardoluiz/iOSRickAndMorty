@@ -30,19 +30,9 @@ class CharacterDetailsView: UIView {
     }()
     
     private var character: Character
-    private var informationsItems: [CharacterDetailItem] = []
-    private var episodesItems: [CharacterDetailItem] = []
-    private let sections: [String] = ["", "Informations", "Episodes"]
     
-    var episodes: [Episode] = [] {
+    var sections: [CharacterDetailSection] = [] {
         didSet {
-            episodesItems = episodes.map({ episode in
-                CharacterDetailItem(
-                    title: episode.episode,
-                    subTitle: episode.name,
-                    accessoryType: .disclosureIndicator
-                )
-            })
             tableView.reloadData()
         }
     }
@@ -50,8 +40,6 @@ class CharacterDetailsView: UIView {
     init(character: Character) {
         self.character = character
         super.init(frame: .zero)
-        
-        loadData(character: character)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -63,22 +51,6 @@ class CharacterDetailsView: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func loadData(character: Character) {
-        
-        informationsItems.append(
-            CharacterDetailItem(title: "Gender", subTitle: character.gender, accessoryType: .none)
-        )
-        informationsItems.append(
-            CharacterDetailItem(title: "Origin", subTitle: character.origin.name, accessoryType: .none)
-        )
-        informationsItems.append(
-            CharacterDetailItem(title: "Type", subTitle: character.type, accessoryType: .none)
-        )
-        informationsItems.append(
-            CharacterDetailItem(title: "Location", subTitle: character.location.name, accessoryType: .disclosureIndicator)
-        )
     }
     
 }
@@ -102,6 +74,9 @@ extension CharacterDetailsView {
 extension CharacterDetailsView: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        if sections.isEmpty { return nil }
+        
         switch section {
         case 0:
             guard let header = tableView.dequeueReusableHeaderFooterView(
@@ -120,7 +95,7 @@ extension CharacterDetailsView: UITableViewDelegate {
             ) as? CharacterDetailsSectionView else {
                 return nil
             }
-            header.section = sections[section]
+            header.section = sections[section].sectionName
             header.isTopDividerHidden = true
             return header
         case 2:
@@ -130,7 +105,7 @@ extension CharacterDetailsView: UITableViewDelegate {
                 return nil
             }
             header.isTopDividerHidden = false
-            header.section = sections[section]
+            header.section = sections[section].sectionName
             return header
         default:
             return nil
@@ -150,8 +125,21 @@ extension CharacterDetailsView: UITableViewDelegate {
         }
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.section {
+        case 0:
+            return 0
+        case 1:
+            return 60
+        case 2:
+            return 77
+        default:
+            return 0
+        }
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return sections.count
     }
     
 }
@@ -159,11 +147,12 @@ extension CharacterDetailsView: UITableViewDelegate {
 extension CharacterDetailsView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if sections.isEmpty { return 0 }
+        
         switch section {
-        case 1:
-            return informationsItems.count
-        case 2:
-            return episodesItems.count
+        case 1, 2:
+            return sections[section].items.count
         default:
             return 0
         }
@@ -171,11 +160,8 @@ extension CharacterDetailsView: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
-        case 1:
-            let item = informationsItems[indexPath.row]
-            return getCellFromItem(item: item)
-        case 2:
-            let item = episodesItems[indexPath.row]
+        case 1, 2:
+            let item = sections[indexPath.section].items[indexPath.row]
             return getCellFromItem(item: item)
         default:
             return UITableViewCell()
@@ -184,12 +170,10 @@ extension CharacterDetailsView: UITableViewDataSource {
     }
     
     private func getCellFromItem(item: CharacterDetailItem) -> UITableViewCell {
-        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: CharacterDetailsView.identifier)
-        cell.textLabel?.text = item.title
-        cell.textLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
-        cell.detailTextLabel?.text = item.subTitle
-        cell.detailTextLabel?.font = .systemFont(ofSize: 15, weight: .regular)
-        cell.detailTextLabel?.textColor = .systemGray
+        let cell = CustomTableViewCell(style: .subtitle, reuseIdentifier: CharacterDetailsView.identifier)
+        cell.title = item.title
+        cell.subtitle = item.subTitle
+        cell.detail = item.detail
         cell.accessoryType = item.accessoryType
         return cell
     }

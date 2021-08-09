@@ -10,13 +10,7 @@ import UIKit
 class CharacterViewController: UIViewController {
     
     private var characterViewModel: CharacterViewModel!
-    
-    private let filterBarButton: UIBarButtonItem = {
-        let button = UIBarButtonItem()
-        button.title = "Filter"
-        return button
-    }()
-    
+        
     private lazy var characterView = CharacterView()
     
     override func viewDidLoad() {
@@ -24,7 +18,15 @@ class CharacterViewController: UIViewController {
         
         title = K.Labels.characterLabelText
 
-        navigationItem.rightBarButtonItem = filterBarButton
+        let filterButton = UIBarButtonItem(
+            title: "Filter",
+            style: .plain,
+            target: self,
+            action: #selector(self.filterButtonClick)
+        )
+        
+        filterButton.title = "Filter"
+        navigationItem.rightBarButtonItem = filterButton
         navigationItem.title = K.Labels.characterLabelText
         navigationItem.largeTitleDisplayMode = .always
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -58,6 +60,12 @@ class CharacterViewController: UIViewController {
         viewModel.isLoading.observe(on: self) { isLoading in
             self.characterView.isLoadingCharacters = isLoading
         }
+    }
+    
+    @objc func filterButtonClick() {
+        let filter = CharacterFilterViewController()
+        filter.modalPresentationStyle = .overCurrentContext
+        self.present(filter, animated: true)
     }
 }
 

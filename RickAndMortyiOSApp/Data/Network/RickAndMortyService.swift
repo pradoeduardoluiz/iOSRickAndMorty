@@ -36,7 +36,10 @@ class RickAndMortyService: NSObject {
     }
     
     func getEpisodesByIds(_ ids: [Int], completion: @escaping ((Result<[EpisodeDTO], Error>) -> ())) {
-        let urlString = "\(baseURL)/episode/\(ids)".replacingOccurrences(of: ", ", with: ",")
+        let urlString = "\(baseURL)/episode/\(ids)"
+            .replacingOccurrences(of: ", ", with: ",")
+            .replacingOccurrences(of: "[", with: "")
+            .replacingOccurrences(of: "]", with: "")
         print(urlString)
         AF.request(urlString, method: .get).responseData { response in
             if let error = response.error {
@@ -47,8 +50,13 @@ class RickAndMortyService: NSObject {
             do {
                 let decoder = JSONDecoder()
                 if let data = response.data {
-                    let response = try decoder.decode([EpisodeDTO].self, from: data)
-                    completion(.success(response))
+                    if ids.count > 1 {
+                        let response = try decoder.decode([EpisodeDTO].self, from: data)
+                        completion(.success(response))
+                    } else {
+                        let response = try decoder.decode(EpisodeDTO.self, from: data)
+                        completion(.success([response]))
+                    }
                 }
             } catch {
                 print(error)

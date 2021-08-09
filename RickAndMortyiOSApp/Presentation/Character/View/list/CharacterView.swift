@@ -40,7 +40,6 @@ class CharacterView: UIView {
         
         collectionView.dataSource = self
         collectionView.delegate = self
-        //collectionView.prefetchDataSource = self
         
         layoutLoad()
     }
@@ -105,9 +104,5 @@ extension CharacterView: UICollectionViewDelegate, UICollectionViewDataSource, U
         }
     }
     
-//    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//        self.loadMoreData()
-//    }
-
 }
 
